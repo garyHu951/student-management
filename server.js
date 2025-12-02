@@ -11,25 +11,34 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
 // MongoDB 連接設定
-// 本地端連接
-// const MONGODB_URI = 'mongodb://localhost:27017/student_management';
+const MONGODB_URI = process.env.MONGODB_URI || 
+    'mongodb+srv://garyhu17_db_user:LpA4uoaUAWdoE90X@cluster0.sopfye6.mongodb.net/student_management?retryWrites=true&w=majority';
 
-// 雲端 Atlas 連接（請替換成你自己的連接字串）
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://garyhu17_db_user:LpA4uoaUAWdoE90X@cluster0.sopfye6.mongodb.net/?appName=Cluster0';
+// 連接到 MongoDB - 修正後的設定
+mongoose.connect(MONGODB_URI, {
+    serverSelectionTimeoutMS: 5000,  // 連接超時時間
+    socketTimeoutMS: 45000,          // Socket 超時時間
+})
+.then(() => {
+    console.log('✅ 成功連接到 MongoDB Atlas');
+})
+.catch((err) => {
+    console.error('❌ MongoDB 連接失敗:', err.message);
+});
 
-// 連接到 MongoDB
-mongoose.connect(MONGODB_URI);
 const db = mongoose.connection;
 
 // 資料庫連線錯誤處理
-db.on('error', console.error.bind(console, '資料庫連線失敗！'));
+db.on('error', (err) => {
+    console.error('資料庫連線錯誤：', err);
+});
 
 // 資料庫連線成功
 db.once('open', function () {
-    console.log('成功連接到資料庫...');
+    console.log('✅ 資料庫連線已開啟');
 });
 
-// 定義 Student Schema（資料格式）
+// 定義 Student Schema
 const studentSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -60,7 +69,6 @@ const Student = mongoose.model('Student', studentSchema);
 // GET /students - 取得所有學生資料
 app.get('/students', async (req, res) => {
     try {
-        // 找出所有學生資料，按建立日期排序（新到舊）
         const students = await Student.find().sort({ createdDate: -1 });
         res.json(students);
     } catch (err) {
@@ -90,24 +98,20 @@ app.post('/students', async (req, res) => {
     try {
         const { name, age, grade } = req.body;
         
-        // 驗證必填欄位
         if (!name || !age || !grade) {
             return res.status(400).json({ 
                 message: '姓名、年齡和年級為必填欄位' 
             });
         }
 
-        // 建立新學生
         const newStudent = new Student({
             name,
             age: parseInt(age),
             grade
         });
 
-        // 儲存到資料庫
         await newStudent.save();
         
-        // 回傳 201 Created 狀態碼和新增的資料
         res.status(201).json(newStudent);
     } catch (err) {
         console.error('新增學生失敗：', err);
@@ -118,14 +122,11 @@ app.post('/students', async (req, res) => {
     }
 });
 
-// PUT /students/:id - 更新學生資料（Bonus）
+// PUT /students/:id - 更新學生資料
 app.put('/students/:id', async (req, res) => {
     try {
         const { name, age, grade } = req.body;
         
-        // 使用 findByIdAndUpdate 更新資料
-        // { new: true } 會回傳更新後的資料
-        // { runValidators: true } 會執行 Schema 驗證
         const updatedStudent = await Student.findByIdAndUpdate(
             req.params.id,
             { name, age: parseInt(age), grade },
@@ -146,7 +147,7 @@ app.put('/students/:id', async (req, res) => {
     }
 });
 
-// DELETE /students/:id - 刪除學生（Bonus）
+// DELETE /students/:id - 刪除學生
 app.delete('/students/:id', async (req, res) => {
     try {
         const deletedStudent = await Student.findByIdAndDelete(req.params.id);
@@ -175,5 +176,5 @@ app.use((req, res) => {
 
 // 啟動伺服器
 app.listen(PORT, () => {
-    console.log(`伺服器運行於 http://localhost:${PORT}`);
+    console.log(`🚀 伺服器運行於 http://localhost:${PORT}`);
 });
