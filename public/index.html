@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>學生資訊管理系統</title>
+    <title>01157123-Exercise11</title>
     <style>
         table,
         th,
@@ -16,7 +16,6 @@
 </head>
 
 <body>
-
     <h1>學生列表</h1>
 
     <table id="student-list" style="width: 80%">
@@ -27,26 +26,27 @@
         </tr>
     </table>
 
+
+
     <h2>新增學生</h2>
 
     <form id="add-student-form">
         <label for="name">姓名：</label>
         <input type="text" id="name" name="name" required>
-
         <label for="age">年齡：</label>
         <input type="number" id="age" name="age" required>
-
         <label for="grade">年級：</label>
         <input type="text" id="grade" name="grade" required>
-
         <button type="submit">新增</button>
     </form>
+
+
+
 
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
             const studentList = document.getElementById('student-list');
 
-            // 取得學生列表
             try {
                 const response = await fetch('/students');
                 const students = await response.json();
@@ -61,7 +61,10 @@
                 console.error('取得學生資料失敗：', err);
             }
 
-            // 監聽新增學生表單
+
+            
+
+
             document.getElementById('add-student-form').addEventListener('submit', async (event) => {
                 event.preventDefault();
 
@@ -85,7 +88,7 @@
                         `<tr><td>${newStudent.name}</td><td>${newStudent.age}歲</td><td>${newStudent.grade}年級</td></tr>`
                     );
 
-                    event.target.reset(); // 清空表單欄位
+                    event.target.reset();
                 } catch (err) {
                     console.error('新增學生失敗：', err);
                 }

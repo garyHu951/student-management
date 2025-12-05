@@ -14,10 +14,11 @@ npm start
 成功連接到資料庫...
 
 步驟 4: 開啟瀏覽器
-打開 **Google Chrome** 或任何瀏覽器，在網址列輸入：
+打開 Google Chrome 或任何瀏覽器，在網址列輸入：
 http://localhost:3000
 
 
 或者直接點擊：
 localhost:3000
 這樣就會自動載入 index.html 了！
+
