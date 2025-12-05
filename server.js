@@ -163,7 +163,7 @@ app.put('/students/:id', async (req, res) => {
             return res.status(404).json({ message: '找不到該學生' });
         }
         
-        console.log('✏️ 成功更新學生:', updatedStudent);
+        console.log('成功更新學生:', updatedStudent);
         res.json(updatedStudent);
     } catch (err) {
         console.error('更新學生資料失敗:', err);
