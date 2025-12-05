@@ -3,7 +3,7 @@
 步驟 1: 開啟命令提示字元
 按 Win + R，輸入 cmd，按 Enter
 
-步驟 2: 進入專案資料夾
+步驟 2: 進入專案資料夾(cd到檔案儲存的位址)
 cd C:\Users\gary_hu\Desktop\Exercise 11
 
 步驟 3: 啟動伺服器
